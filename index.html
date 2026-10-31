@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6f4ef">
+<title>Palette Studio — Colour Palette Generator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--ink:#171717;--muted:#77766f;--paper:#f6f4ef;--line:#e3e0d8;--accent:#ff6b4a}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif}button,input{font:inherit}button{cursor:pointer}
+.app{max-width:1240px;margin:auto;padding:24px 28px 44px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 0 28px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.7px;font-size:19px}.brand-mark{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:#171717;color:#fff;font-size:17px}
+.top-note{font-size:12px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.hero{padding:42px 0 30px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,5vw,58px);letter-spacing:-2.8px;line-height:1.02;margin:0;max-width:700px}h1 span{color:var(--accent)}.hero p{max-width:380px;color:var(--muted);font-size:14px;line-height:1.7;margin:16px 0 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 24px}.btn{border:1px solid var(--ink);border-radius:999px;padding:12px 18px;font-weight:700;font-size:13px;background:transparent;color:var(--ink);transition:.2s}.btn:hover{transform:translateY(-2px)}.btn.primary{background:var(--ink);color:white}.btn .icon{margin-right:7px}
+.colour-picker-panel{margin-bottom:22px}.picker-content{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:18px 20px 12px}.picker-control{display:flex;flex-direction:column;gap:8px;min-width:140px;flex:1}.colour-input-wrap{display:flex;align-items:center;gap:8px}.colour-input-wrap input[type=color]{width:48px;height:42px;border:1px solid var(--line);background:#fff;padding:4px;border-radius:10px;cursor:pointer}.colour-input-wrap input[type=text],.picker-control select{width:100%;height:42px;border:1px solid var(--line);background:#fbfaf7;border-radius:10px;padding:0 11px;color:var(--ink);font-size:13px;outline:none}.colour-input-wrap input[type=text]{font-weight:700;letter-spacing:.5px}.picker-apply{height:42px;white-space:nowrap}.quick-colours{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:0 20px 18px}.quick-colours .tiny-label{margin-right:4px}.quick-dot{width:25px;height:25px;border-radius:50%;background:var(--dot);border:2px solid #fff;box-shadow:0 0 0 1px #d8d5ce;cursor:pointer}.quick-dot:hover{transform:scale(1.13)}.swatch.locked{outline:3px solid var(--ink);outline-offset:-5px}.lock-status{font-size:9px;letter-spacing:.6px;text-transform:uppercase;margin-top:5px;font-weight:700}
+.workspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.8fr);gap:22px;align-items:start}
+.panel{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden}.panel-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line);gap:12px}.panel-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700}.panel-sub{font-size:12px;color:var(--muted);margin-top:4px}.tiny-label{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.palette{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));min-height:330px}.swatch{position:relative;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:15px 5px;transition:background .3s}.swatch:nth-child(odd){border-right:1px solid #ffffff26}.hex{font-size:12px;font-weight:700;letter-spacing:.3px;border:0;background:#ffffffd9;border-radius:7px;padding:8px 5px;width:100%;max-width:92px;text-align:center;color:#171717;box-shadow:0 2px 12px #0000000b}.swatch-actions{display:flex;gap:5px;margin-top:8px}.mini-btn{border:0;background:#ffffffd9;border-radius:50%;width:27px;height:27px;font-size:13px;color:#171717}.swatch-number{position:absolute;top:16px;left:12px;font-size:10px;font-weight:700;opacity:.72}.swatch-tip{padding:13px 18px;color:var(--muted);font-size:12px;line-height:1.6;border-top:1px solid var(--line)}
+.side-stack{display:grid;gap:22px}.story-wrap{padding:18px;background:#eeece6;display:flex;justify-content:center}.story{width:min(100%,270px);aspect-ratio:9/16;border-radius:14px;overflow:hidden;position:relative;background:#222;box-shadow:0 12px 35px #17171720;isolation:isolate}.story-colors{position:absolute;inset:0;display:grid;grid-template-rows:1.35fr .78fr .82fr .78fr .82fr;z-index:0}.story-band{display:flex;align-items:flex-end;justify-content:space-between;padding:10px 12px;font-size:9px;font-weight:700;letter-spacing:.65px;transition:background .3s;min-height:0}.story-brand{position:absolute;top:18px;left:16px;right:16px;height:auto;max-height:205px;color:white;mix-blend-mode:difference;z-index:2;pointer-events:none;overflow:hidden}.story-brand .small{font-size:7px;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:7px}.story-brand h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(21px,8vw,24px);letter-spacing:-1px;line-height:.94;margin:0;max-width:190px;overflow-wrap:normal}.story-brand p{font-size:8px;line-height:1.35;max-width:145px;margin-top:7px}.story-footer{position:absolute;bottom:12px;left:16px;right:16px;height:auto;padding:0;display:flex;justify-content:space-between;align-items:center;font-size:8px;letter-spacing:1.4px;font-weight:700;color:white;mix-blend-mode:difference;z-index:3}.story-footer .dot{width:22px;height:22px;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;font-size:12px;flex-shrink:0}
+.story-controls{padding:14px 18px 18px;display:flex;gap:8px}.btn.small{padding:10px 12px;font-size:12px;flex:1}
+.tools{padding:18px 20px}.tool-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #f0eee9}.tool-row:last-child{border-bottom:0}.tool-label{font-size:13px;font-weight:600}.tool-help{font-size:11px;color:var(--muted);margin-top:3px}.toggle{width:42px;height:24px;background:#ddd;border-radius:99px;border:0;padding:3px;transition:.2s}.toggle:after{content:"";display:block;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px #0002}.toggle.on{background:var(--ink)}.toggle.on:after{transform:translateX(18px)}
+.saved{display:flex;gap:8px;flex-wrap:wrap;padding:0 20px 18px}.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 11px;font-size:11px;font-weight:600;color:var(--muted)}
+.footer{display:flex;justify-content:space-between;gap:12px;margin-top:25px;padding-top:18px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.kbd{border:1px solid #d8d5ce;border-radius:5px;padding:3px 6px;background:#fff;color:#555}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:#171717;color:white;padding:12px 18px;border-radius:99px;font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:10}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:820px){.app{padding:18px 15px 30px}.hero{display:block;padding-top:34px}.hero p{max-width:500px}.workspace{grid-template-columns:1fr}.palette{min-height:280px}.side-stack{grid-template-columns:1fr}.top-note{display:none}}
+@media(max-width:430px){.story-brand{top:16px;left:14px;right:14px;max-height:185px}.story-brand h2{font-size:22px}.story-brand .small{font-size:7px;margin-bottom:6px}.story-brand p{font-size:7px;margin-top:6px}.palette{min-height:235px}.swatch{padding:10px 3px}.hex{font-size:10px;padding:7px 1px}.swatch-number{left:7px;top:9px}.panel-head{padding:15px}.hero h1{letter-spacing:-1.8px}.footer{flex-direction:column}.story{width:min(100%,250px)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">◒</span> palette studio</div>
+    <div class="top-note">Colour playground · No. 001</div>
+  </header>
+  <section class="hero">
+    <div><div class="eyebrow">Find your next visual identity</div><h1>Make colour feel <span>like you.</span></h1><p>Generate fresh colour palettes, lock the shades you love, and preview your colours in an Instagram Story-sized design.</p></div>
+  </section>
+  <div class="actions">
+    <button class="btn primary" id="generate"><span class="icon">✳</span>Generate palette <span class="kbd">Space</span></button>
+    <button class="btn" id="copyAll">▣ Copy all HEX</button>
+    <button class="btn" id="reset">↺ Unlock all</button>
+  </div>
+  <section class="panel colour-picker-panel">
+    <div class="panel-head"><div><div class="panel-title">Choose a specific colour</div><div class="panel-sub">Pick a starting colour, then generate matching shades around it.</div></div><span class="tiny-label">CUSTOM</span></div>
+    <div class="picker-content">
+      <label class="picker-control"><span class="tiny-label">Base colour</span><span class="colour-input-wrap"><input id="baseColour" type="color" value="#D9896A" aria-label="Choose base colour"><input id="baseHex" type="text" value="#D9896A" maxlength="7" aria-label="Base HEX code"></span></label>
+      <label class="picker-control"><span class="tiny-label">Colour harmony</span><select id="harmony"><option value="complementary">Complementary</option><option value="analogous">Analogous</option><option value="triadic">Triadic</option><option value="monochromatic">Monochromatic</option><option value="pastel">Pastel mix</option><option value="random">Random around base</option></select></label>
+      <button class="btn primary picker-apply" id="applyBase">Build palette ↗</button>
+    </div>
+    <div class="quick-colours"><span class="tiny-label">Quick picks</span><button class="quick-dot" style="--dot:#E85D3F" data-colour="#E85D3F" title="Coral"></button><button class="quick-dot" style="--dot:#F2C14E" data-colour="#F2C14E" title="Golden yellow"></button><button class="quick-dot" style="--dot:#477A61" data-colour="#477A61" title="Forest green"></button><button class="quick-dot" style="--dot:#6082B6" data-colour="#6082B6" title="Blue"></button><button class="quick-dot" style="--dot:#8B6BB1" data-colour="#8B6BB1" title="Purple"></button><button class="quick-dot" style="--dot:#E7B7C8" data-colour="#E7B7C8" title="Pink"></button><button class="quick-dot" style="--dot:#2B2B2B" data-colour="#2B2B2B" title="Charcoal"></button><button class="quick-dot" style="--dot:#F4E9CD" data-colour="#F4E9CD" title="Cream"></button>
+    </div>
+  </section>
+  <main class="workspace">
+    <section class="panel">
+      <div class="panel-head"><div><div class="panel-title">Your colour palette</div><div class="panel-sub">Tap a HEX code to copy it · Lock shades you want to keep</div></div><span class="tiny-label" id="paletteCount">05 colours</span></div>
+      <div class="palette" id="palette"></div>
+      <div class="swatch-tip">✦ <strong>Quick tip:</strong> Lock one or more colours, then generate again to explore combinations around your favourites.</div>
+    </section>
+    <aside class="side-stack">
+      <section class="panel">
+        <div class="panel-head"><div><div class="panel-title">Instagram Story preview</div><div class="panel-sub">Portrait canvas · 1080 × 1920</div></div><span class="tiny-label">9:16</span></div>
+        <div class="story-wrap"><div class="story" id="story">
+          <div class="story-colors" id="storyColors"></div>
+          <div class="story-brand"><div class="small">Colour study / 001</div><h2>COLOUR<br>HAS A<br>FEELING.</h2><p>A palette for ideas that deserve to be seen.</p></div>
+          <div class="story-footer"><span>PALETTE STUDIO</span><span class="dot">↗</span></div>
+        </div></div>
+        <div class="story-controls"><button class="btn small primary" id="downloadStory">↓ Download Story PNG</button><button class="btn small" id="randomStory">↻ Refresh</button></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><div><div class="panel-title">Palette tools</div><div class="panel-sub">Make the generator work your way</div></div></div>
+        <div class="tools">
+          <div class="tool-row"><div><div class="tool-label">Keep locked colours</div><div class="tool-help">Preserve locked swatches when generating</div></div><button class="toggle on" id="keepLocks" aria-label="Keep locked colours"></button></div>
+          <div class="tool-row"><div><div class="tool-label">Include neutral shades</div><div class="tool-help">Add softer tones to future palettes</div></div><button class="toggle" id="neutrals" aria-label="Include neutral shades"></button></div>
+          <div class="tool-row"><div><div class="tool-label">Show HEX labels</div><div class="tool-help">Display codes on the Story preview</div></div><button class="toggle on" id="showHex" aria-label="Show HEX labels"></button></div>
+        </div>
+        <div class="saved"><button class="chip" id="presetWarm">Warm & earthy</button><button class="chip" id="presetCool">Cool & calm</button><button class="chip" id="presetBold">Bold & playful</button></div>
+      </section>
+    </aside>
+  </main>
+  <footer class="footer"><span>PALETTE STUDIO © 2026 · Made for curious creatives.</span><span>Pro tip: press <span class="kbd">Space</span> to generate a new palette.</span></footer>
+</div>
+<div class="toast" id="toast">Copied to clipboard</div>
+<script>
+const paletteEl=document.getElementById('palette'), storyColors=document.getElementById('storyColors'), toastEl=document.getElementById('toast');
+let colors=['#F4E9CD','#D8A48F','#BB8588','#7D6B7D','#3A445D'], locked=[false,false,false,false,false], keepLocks=true, neutralMode=false, showHex=true, toastTimer;
+const presets={
+ warm:['#F4E9CD','#E6B89C','#D9896A','#8F5D4A','#43302E'],
+ cool:['#E4F1F1','#B6D8D6','#79A9A5','#537C83','#304A5A'],
+ bold:['#FFBE0B','#FB5607','#FF006E','#8338EC','#3A86FF']
+};
+function randHex(){return '#'+Math.floor(Math.random()*16777216).toString(16).padStart(6,'0').toUpperCase()}
+function hslColor(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return '#'+[f(0),f(8),f(4)].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('').toUpperCase()}
+function generate(){const next=[...colors];for(let i=0;i<5;i++){if(keepLocks&&locked[i])continue;if(neutralMode&&Math.random()<.35){next[i]=hslColor(Math.random()*360,8+Math.random()*20,20+Math.random()*68)}else{const hue=Math.random()*360;next[i]=hslColor(hue,38+Math.random()*55,25+Math.random()*60)}}colors=next;render(); }
+function luminance(hex){const c=hex.slice(1);const rgb=[0,2,4].map(i=>parseInt(c.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*rgb[0]+.7152*rgb[1]+.0722*rgb[2]}
+function textColor(hex){return luminance(hex)>.42?'#171717':'#FFFFFF'}
+function render(){paletteEl.innerHTML='';colors.forEach((color,i)=>{const sw=document.createElement('div');sw.className='swatch';sw.style.background=color;sw.style.color=textColor(color);sw.classList.toggle('locked',locked[i]);sw.innerHTML=`<span class="swatch-number">${String(i+1).padStart(2,'0')}</span><button class="hex" title="Copy ${color}" data-copy="${color}">${color}</button><div class="swatch-actions"><button class="mini-btn" title="${locked[i]?'Unlock':'Lock'} this colour" aria-label="${locked[i]?'Unlock':'Lock'} colour ${i+1}" data-lock="${i}">${locked[i]?'🔒':'🔓'}</button><button class="mini-btn" title="Generate a new colour here" aria-label="Regenerate colour ${i+1}" data-one="${i}">↻</button></div><span class="lock-status">${locked[i]?'Locked':'Unlocked'}</span>`;paletteEl.appendChild(sw)});renderStory()}
+function renderStory(){storyColors.innerHTML='';colors.forEach((c,i)=>{const band=document.createElement('div');band.className='story-band';band.style.background=c;band.style.color=textColor(c);band.innerHTML=`<span>${String(i+1).padStart(2,'0')} / ${['BASE','ACCENT','MOOD','DEPTH','DETAIL'][i]}</span><span class="story-hex" style="${showHex?'':'display:none'}">${c}</span>`;storyColors.appendChild(band)})}
+function showToast(msg){toastEl.textContent=msg;toastEl.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),1700)}
+async function copyText(text){try{await navigator.clipboard.writeText(text)}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}showToast('Copied '+text)}
+paletteEl.addEventListener('click',e=>{const copy=e.target.closest('[data-copy]');const lock=e.target.closest('[data-lock]');const one=e.target.closest('[data-one]');if(copy)copyText(copy.dataset.copy);if(lock){const i=+lock.dataset.lock;locked[i]=!locked[i];render()}if(one){const i=+one.dataset.one;colors[i]=neutralMode&&Math.random()<.35?hslColor(Math.random()*360,12,20+Math.random()*65):hslColor(Math.random()*360,40+Math.random()*55,25+Math.random()*60);render()}});
+document.getElementById('generate').onclick=generate;document.getElementById('copyAll').onclick=()=>copyText(colors.join(', '));document.getElementById('reset').onclick=()=>{locked=[false,false,false,false,false];showToast('All colour locks cleared');render()};
+document.getElementById('keepLocks').onclick=e=>{keepLocks=!keepLocks;e.currentTarget.classList.toggle('on',keepLocks)};
+document.getElementById('neutrals').onclick=e=>{neutralMode=!neutralMode;e.currentTarget.classList.toggle('on',neutralMode)};
+document.getElementById('showHex').onclick=e=>{showHex=!showHex;e.currentTarget.classList.toggle('on',showHex);renderStory()};
+document.getElementById('presetWarm').onclick=()=>applyPreset('warm');document.getElementById('presetCool').onclick=()=>applyPreset('cool');document.getElementById('presetBold').onclick=()=>applyPreset('bold');
+function applyPreset(name){colors=[...presets[name]];render();showToast(name[0].toUpperCase()+name.slice(1)+' palette loaded')}
+document.getElementById('randomStory').onclick=()=>{document.getElementById('story').animate([{transform:'scale(.98)'},{transform:'scale(1)'}],{duration:220});renderStory();showToast('Story preview refreshed')};
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();generate()}});
+function hexToRgb(hex){return {r:parseInt(hex.slice(1,3),16),g:parseInt(hex.slice(3,5),16),b:parseInt(hex.slice(5,7),16)}}
+function drawWrapped(ctx,text,x,y,maxWidth,lineHeight){let words=text.split(' '),line='';for(let n=0;n<words.length;n++){let test=line+words[n]+' ';if(ctx.measureText(test).width>maxWidth&&n>0){ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight}else line=test}ctx.fillText(line,x,y);return y}
+document.getElementById('downloadStory').onclick=()=>{const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;const ctx=canvas.getContext('2d');const heights=[430,300,330,300,560];let y=0;colors.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,y,1080,heights[i]);ctx.fillStyle=textColor(c);ctx.font='700 29px Arial';ctx.fillText(`${String(i+1).padStart(2,'0')} / ${['BASE','ACCENT','MOOD','DEPTH','DETAIL'][i]}`,70,y+heights[i]-48);if(showHex){ctx.textAlign='right';ctx.fillText(c,1010,y+heights[i]-48);ctx.textAlign='left'}y+=heights[i]});
+ctx.fillStyle='#FFFFFF';ctx.globalCompositeOperation='difference';ctx.font='700 24px Arial';ctx.fillText('C O L O U R   S T U D Y  /  001',72,82);ctx.font='700 88px Arial';ctx.fillText('COLOUR',72,190);ctx.fillText('HAS A',72,278);ctx.fillText('FEELING.',72,366);ctx.font='400 25px Arial';drawWrapped(ctx,'A palette for ideas that deserve to be seen.',72,410,620,36);ctx.font='700 25px Arial';ctx.fillText('PALETTE STUDIO',72,1850);ctx.beginPath();ctx.arc(1000,1830,30,0,Math.PI*2);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();ctx.font='30px Arial';ctx.fillText('↗',987,1840);ctx.globalCompositeOperation='source-over';const a=document.createElement('a');a.download='palette-studio-instagram-story.png';a.href=canvas.toDataURL('image/png');a.click();showToast('Instagram Story PNG downloaded')};
+// Custom base-colour generator with selectable colour harmony.
+function hexToHsl(hex){const {r:R,g:G,b:B}=hexToRgb(hex);let r=R/255,g=G/255,b=B/255,max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,l=(max+min)/2;if(max===min)h=s=0;else{let d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break}h*=60}return {h,s:s*100,l:l*100}}
+function buildHarmony(base,mode){const {h,s,l}=hexToHsl(base);const specs={complementary:[[0,s,l],[180,s,Math.max(25,Math.min(75,l))],[0,Math.max(30,s-18),Math.min(85,l+18)],[180,Math.max(30,s-15),Math.max(20,l-18)],[0,Math.max(20,s-30),Math.max(15,Math.min(90,l+(l<50?28:-25)))]],analogous:[[-35,s,l],[-17,s,Math.min(78,l+12)],[0,s,l],[17,s,Math.max(22,l-10)],[35,s,Math.max(18,Math.min(82,l+5))]],triadic:[[0,s,l],[120,s,Math.min(75,l+10)],[240,s,Math.max(25,l-5)],[0,Math.max(25,s-25),Math.min(85,l+22)],[240,Math.max(25,s-15),Math.max(20,l-20)]],monochromatic:[[0,s,Math.max(12,l-28)],[0,s,Math.max(18,l-14)],[0,s,l],[0,Math.max(20,s-12),Math.min(85,l+15)],[0,Math.max(12,s-25),Math.min(94,l+30)]],pastel:[[-35,Math.min(60,s),78],[-17,Math.min(55,s),87],[0,Math.min(55,s),Math.max(70,l)],[17,Math.min(60,s),80],[35,Math.min(60,s),72]]};if(mode==='random')return [0,1,2,3,4].map((_,i)=>i===2?base:hslColor((h+(Math.random()-.5)*100+360)%360,Math.max(25,Math.min(95,s+(Math.random()-.5)*30)),Math.max(18,Math.min(85,l+(Math.random()-.5)*40))));return specs[mode].map(([offset,ss,ll],i)=>i===2?base:hslColor((h+offset+360)%360,Math.max(0,Math.min(100,ss)),Math.max(5,Math.min(95,ll))))}
+function applyBaseColour(base){if(!/^#[0-9a-fA-F]{6}$/.test(base)){showToast('Enter a valid HEX code like #D9896A');return}const mode=document.getElementById('harmony').value;const generated=buildHarmony(base.toUpperCase(),mode);colors=generated.map((c,i)=>keepLocks&&locked[i]?colors[i]:c);render();showToast('Custom '+mode+' palette created')}
+const baseColour=document.getElementById('baseColour'),baseHex=document.getElementById('baseHex');baseColour.addEventListener('input',()=>baseHex.value=baseColour.value.toUpperCase());baseHex.addEventListener('input',()=>{if(/^#[0-9a-fA-F]{6}$/.test(baseHex.value))baseColour.value=baseHex.value});document.getElementById('applyBase').onclick=()=>applyBaseColour(baseHex.value.trim());document.querySelectorAll('[data-colour]').forEach(btn=>btn.onclick=()=>{baseColour.value=btn.dataset.colour;baseHex.value=btn.dataset.colour;applyBaseColour(btn.dataset.colour)});
+render();
+</script>
+</body>
+</html>
